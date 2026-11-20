@@ -1,16 +1,16 @@
-## Hi there 👋
+DolarPlay 🎮
 
-<!--
-**DolarPlay/dolarplay** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
+Plataforma de jogos, tarefas e recompensas
 
-Here are some ideas to get you started:
+Bem-vindo à DolarPlay!
 
-- 🔭 I’m currently working on ...
-- 🌱 I’m currently learning ...
-- 👯 I’m looking to collaborate on ...
-- 🤔 I’m looking for help with ...
-- 💬 Ask me about ...
-- 📫 How to reach me: ...
-- 😄 Pronouns: ...
-- ⚡ Fun fact: ...
--->
+Nosso objetivo é desenvolver uma plataforma onde usuários possam:
+
+* 🎮 Jogar e participar de desafios.
+* 📱 Realizar tarefas online.
+* 💰 Acumular recompensas.
+* 🌎 Participar de uma comunidade digital.
+
+DolarPlay — Diversão e oportunidades em um só lugar!
+
+🚀 Projeto em desenvolvimento.
