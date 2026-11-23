@@ -5,64 +5,59 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>DolarPlay - Jogos e Recompensas</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    * {
-      box-sizing: border-box;
-    }
-
+    * { box-sizing: border-box; }
     body {
       margin: 0;
       font-family: Arial, sans-serif;
       background: #101426;
       color: white;
     }
-
     header {
       background: #19213b;
       padding: 22px;
       text-align: center;
     }
-
-    header h1 {
-      color: #35d6a0;
-      margin: 0;
-      font-size: 30px;
-    }
-
+    header h1 { color: #35d6a0; margin: 0; }
     .container {
       max-width: 600px;
       margin: auto;
       padding: 25px 18px;
       text-align: center;
     }
-
-    .saldo, .item {
+    .card {
       background: #19213b;
-      padding: 20px;
+      padding: 22px;
       border-radius: 12px;
-      margin: 15px 0;
+      margin: 18px 0;
     }
-
-    .saldo h2 {
-      color: #35d6a0;
-      font-size: 28px;
+    input {
+      display: block;
+      width: 100%;
+      padding: 14px;
+      margin: 12px 0;
+      border: 1px solid #394563;
+      border-radius: 8px;
+      background: #101426;
+      color: white;
+      font-size: 16px;
     }
-
     button {
       background: #35d6a0;
       color: #101426;
       border: none;
-      padding: 13px 25px;
+      padding: 13px 20px;
       border-radius: 8px;
       font-size: 16px;
       font-weight: bold;
+      cursor: pointer;
+      margin: 5px;
     }
-
-    footer {
-      padding: 25px;
-      color: #aaa;
-      text-align: center;
-    }
+    .secondary { background: #394563; color: white; }
+    #mensagem { color: #35d6a0; overflow-wrap: anywhere; }
+    #areaUsuario { display: none; }
+    footer { padding: 25px; color: #aaa; text-align: center; }
   </style>
 </head>
 <body>
@@ -75,34 +70,137 @@
     <h2>Bem-vindo à DolarPlay!</h2>
     <p>Sua plataforma de jogos, tarefas e recompensas.</p>
 
-    <div class="saldo">
-      <p>Minha carteira</p>
-      <h2>R$ 0,00</h2>
-      <p>Saldo demonstrativo</p>
-    </div>
+    <section class="card" id="areaAcesso">
+      <h2>Crie sua conta</h2>
+      <form id="formCadastro">
+        <input id="nome" type="text" placeholder="Seu nome" required>
+        <input id="emailCadastro" type="email" placeholder="Seu e-mail" required>
+        <input id="senhaCadastro" type="password" placeholder="Crie uma senha (mínimo 6 caracteres)" minlength="6" required>
+        <button type="submit">Cadastrar</button>
+      </form>
 
-    <div class="item">
+      <hr style="border-color:#394563; margin:25px 0">
+
+      <h2>Já tem uma conta?</h2>
+      <form id="formLogin">
+        <input id="emailLogin" type="email" placeholder="Seu e-mail" required>
+        <input id="senhaLogin" type="password" placeholder="Sua senha" required>
+        <button type="submit">Entrar</button>
+      </form>
+      <p id="mensagem" role="status"></p>
+    </section>
+
+    <section class="card" id="areaUsuario">
+      <h2>Minha conta</h2>
+      <p id="boasVindas"></p>
+      <p>Minha carteira</p>
+      <h2 style="color:#35d6a0">R$ 0,00</h2>
+      <p>Saldo demonstrativo, sem valor para saque.</p>
+      <button class="secondary" id="botaoSair">Sair da conta</button>
+    </section>
+
+    <div class="card">
       <h3>🎮 Jogos</h3>
       <p>Novidades em breve.</p>
       <button disabled>Em breve</button>
     </div>
 
-    <div class="item">
+    <div class="card">
       <h3>📱 Tarefas</h3>
       <p>Atividades e desafios em breve.</p>
       <button disabled>Em breve</button>
     </div>
 
-    <div class="item">
+    <div class="card">
       <h3>💰 Recompensas</h3>
       <p>Sistema de recompensas em desenvolvimento.</p>
       <button disabled>Em breve</button>
     </div>
   </main>
 
-  <footer>
-    DolarPlay © 2026 - Projeto em desenvolvimento
-  </footer>
+  <footer>DolarPlay © 2026 - Projeto em desenvolvimento</footer>
+
+  <script>
+    const SUPABASE_URL = 'https://rpujgfnpjtojljoyzmlw.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_taOClxNI0Et2cxe3oeRQ1A_gUQerBUM';
+
+    const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    const mensagem = document.getElementById('mensagem');
+    const areaAcesso = document.getElementById('areaAcesso');
+    const areaUsuario = document.getElementById('areaUsuario');
+    const boasVindas = document.getElementById('boasVindas');
+
+    function mostrarMensagem(texto) {
+      mensagem.textContent = texto;
+    }
+
+    function atualizarTela(usuario) {
+      if (usuario) {
+        areaAcesso.style.display = 'none';
+        areaUsuario.style.display = 'block';
+        boasVindas.textContent = 'Você entrou com: ' + usuario.email;
+      } else {
+        areaAcesso.style.display = 'block';
+        areaUsuario.style.display = 'none';
+      }
+    }
+
+    document.getElementById('formCadastro').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      mostrarMensagem('Criando sua conta...');
+
+      const nome = document.getElementById('nome').value.trim();
+      const email = document.getElementById('emailCadastro').value.trim();
+      const password = document.getElementById('senhaCadastro').value;
+
+      const { data, error } = await db.auth.signUp({
+        email,
+        password,
+        options: {
+          data: { nome },
+          emailRedirectTo: 'https://dolarplay.github.io/dolarplay/'
+        }
+      });
+
+      if (error) {
+        mostrarMensagem('Erro no cadastro: ' + error.message);
+      } else if (data.session) {
+        mostrarMensagem('Conta criada com sucesso!');
+      } else {
+        mostrarMensagem('Cadastro iniciado! Confira seu e-mail e confirme sua conta antes de entrar.');
+      }
+    });
+
+    document.getElementById('formLogin').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      mostrarMensagem('Verificando seus dados...');
+
+      const email = document.getElementById('emailLogin').value.trim();
+      const password = document.getElementById('senhaLogin').value;
+
+      const { error } = await db.auth.signInWithPassword({ email, password });
+
+      if (error) {
+        mostrarMensagem('Não foi possível entrar: ' + error.message);
+      } else {
+        mostrarMensagem('');
+      }
+    });
+
+    document.getElementById('botaoSair').addEventListener('click', async () => {
+      const { error } = await db.auth.signOut();
+      if (error) mostrarMensagem('Erro ao sair: ' + error.message);
+      else mostrarMensagem('Você saiu da sua conta.');
+    });
+
+    db.auth.onAuthStateChange((_event, session) => {
+      atualizarTela(session?.user ?? null);
+    });
+
+    db.auth.getSession().then(({ data }) => {
+      atualizarTela(data.session?.user ?? null);
+    });
+  </script>
 </body>
 </html>
-
